@@ -95,6 +95,6 @@ class PDFWorker {
         }
         document.close();
 
-        System.out.println(file.getAbsolutePath() + " is created!");
+        System.out.println("Файл создан. Путь: " + file.getAbsolutePath());
     }
 }

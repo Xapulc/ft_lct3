@@ -75,7 +75,7 @@ class ExcelWorker {
         File file = new File("DataExcel.xls");
         try (FileOutputStream out = new FileOutputStream(file)) {
             workbook.write(out);
-            System.out.println(file.getAbsolutePath() + " is created!");
+            System.out.println("Файл создан. Путь: " + file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
