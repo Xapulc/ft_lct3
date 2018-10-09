@@ -1,15 +1,11 @@
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
 class ExcelWorker {
@@ -43,7 +39,7 @@ class ExcelWorker {
         row.createCell(++columnCur).setCellValue(
                 (dataModel.getSex() == 'M') ? "М" : "Ж");
         row.createCell(++columnCur).setCellValue("" + dataModel.getBorn().get(Calendar.DATE) +
-                "." + 1+dataModel.getBorn().get(Calendar.MONTH) +
+                "." + (1 + dataModel.getBorn().get(Calendar.MONTH)) +
                 "." + dataModel.getBorn().get(Calendar.YEAR));
         row.createCell(++columnCur).setCellValue(dataModel.getITN().toString());
         row.createCell(++columnCur).setCellValue(dataModel.getPostcode().toString());
@@ -56,28 +52,11 @@ class ExcelWorker {
 
     }
 
-    private static void aligning (HSSFWorkbook workbook, HSSFSheet sheet) {
-        DataFormatter objDefaultFormat = new DataFormatter();
-        FormulaEvaluator objFormulaEvaluator = new HSSFFormulaEvaluator(workbook);
-        Iterator<Row> rowIterator = sheet.iterator();
+    private static void aligning (HSSFSheet sheet, List<DataModel> dataList) {
+        int[] maxSizeColumn = DataModel.aligning(dataList);
         int columnNum = sheet.getRow(0).getLastCellNum();
-        int[] maxSizeColumn = new int[columnNum];
-        for (int i = 0; i < columnNum; i++)
-            maxSizeColumn[i] = sheet.getColumnWidth(i);
-
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            for (int i = 0; i < row.getLastCellNum(); i++) {
-                objFormulaEvaluator.evaluate(row.getCell(i));
-                String cellValueStr = objDefaultFormat.formatCellValue(row.getCell(i),
-                        objFormulaEvaluator);
-                maxSizeColumn[i] = (300 * cellValueStr.length() > maxSizeColumn[i]) ?
-                        300 * cellValueStr.length() : maxSizeColumn[i];
-            }
-        }
-
         for (int i = 0; i < columnNum; i++) {
-            sheet.setColumnWidth(i, maxSizeColumn[i]);
+            sheet.setColumnWidth(i, 150 + 300 * maxSizeColumn[i]);
         }
     }
 
@@ -92,12 +71,13 @@ class ExcelWorker {
         for (DataModel dataModel : dataList)
             createRow(sheet, ++rowNum, dataModel);
 
-        aligning(workbook, sheet);
-        try (FileOutputStream out = new FileOutputStream(new File("DataExcel.xls"))) {
+        aligning(sheet, dataList);
+        File file = new File("DataExcel.xls");
+        try (FileOutputStream out = new FileOutputStream(file)) {
             workbook.write(out);
+            System.out.println(file.getAbsolutePath() + " is created!");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Excel file is created!");
     }
 }

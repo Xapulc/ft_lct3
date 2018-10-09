@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,30 +40,32 @@ class PDFWorker {
         } catch (DocumentException | IOException e) {
             e.printStackTrace();
         }
-
-        table.addCell(new PdfPCell(new Phrase(dataModel.getName(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getSurname(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getPatronymic(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase("" + dataModel.getAge())));
+        int sizeFont = 10;
+        Font font = new Font(times,sizeFont);
+        table.addCell(new PdfPCell(new Phrase(dataModel.getName(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getSurname(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getPatronymic(), font)));
+        table.addCell(new PdfPCell(new Phrase("" + dataModel.getAge(), font)));
         table.addCell(new PdfPCell(new Phrase(
-                (dataModel.getSex() == 'M') ? "М" : "Ж", new Font(times,12))));
+                (dataModel.getSex() == 'M') ? "М" : "Ж", font)));
         table.addCell(new PdfPCell(new Phrase("" + dataModel.getBorn().get(Calendar.DATE) +
-                "." + 1+dataModel.getBorn().get(Calendar.MONTH) +
-                "." + dataModel.getBorn().get(Calendar.YEAR))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getITN().toString())));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getPostcode().toString())));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getCountry(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getRegion(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getCity(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase(dataModel.getStreet(), new Font(times,12))));
-        table.addCell(new PdfPCell(new Phrase("" + dataModel.getHome())));
-        table.addCell(new PdfPCell(new Phrase("" + dataModel.getFlat())));
+                "." + (1 + dataModel.getBorn().get(Calendar.MONTH)) +
+                "." + dataModel.getBorn().get(Calendar.YEAR), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getITN().toString(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getPostcode().toString(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getCountry(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getRegion(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getCity(), font)));
+        table.addCell(new PdfPCell(new Phrase(dataModel.getStreet(), font)));
+        table.addCell(new PdfPCell(new Phrase("" + dataModel.getHome(), font)));
+        table.addCell(new PdfPCell(new Phrase("" + dataModel.getFlat(), font)));
     }
 
     static void createPDF(List<DataModel> dataList) {
         Document document = new Document(PageSize.A4.rotate());
+        File file = new File("DataPDF.pdf");
         try {
-            PdfWriter.getInstance(document, new FileOutputStream("DataPDF.pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream(file));
         } catch (DocumentException | FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -78,6 +81,11 @@ class PDFWorker {
         for (DataModel dataModel : dataList)
             createRow(table, dataModel);
 
+        try {
+            table.setWidths(DataModel.aligning(dataList));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
         section.add(table);
 
         try {
@@ -87,6 +95,6 @@ class PDFWorker {
         }
         document.close();
 
-        System.out.println("PDF file is created!");
+        System.out.println(file.getAbsolutePath() + " is created!");
     }
 }

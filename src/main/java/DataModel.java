@@ -1,8 +1,5 @@
-import javax.xml.crypto.Data;
 import java.io.FileNotFoundException;
 import java.util.*;
-
-import static java.lang.Integer.*;
 
 class DataModel {
     private String name;
@@ -154,26 +151,30 @@ class DataModel {
         ITN.append(getControlDigit2());
     }
 
+    private int getIntITN(int i) {
+        return Integer.parseInt(""+ITN.charAt(i));
+    }
+
     private Integer getControlDigit1() {
         int i = -1;
-        int controlDigit = (7 * valueOf(ITN.charAt(++i)) + 2 * valueOf(ITN.charAt(++i)) +
-                4 * valueOf(ITN.charAt(++i)) + 10 * valueOf(ITN.charAt(++i)) +
-                3 * valueOf(ITN.charAt(++i)) + 5 * valueOf(ITN.charAt(++i)) +
-                9 * valueOf(ITN.charAt(++i)) + 4 * valueOf(ITN.charAt(++i)) +
-                6 * valueOf(ITN.charAt(++i)) + 8 * valueOf(ITN.charAt(++i))) % 11;
-        controlDigit = controlDigit != 10 ? controlDigit : 0;
+        int controlDigit = (7 * getIntITN(++i) + 2 * getIntITN(++i)
+                + 4 * getIntITN(++i) + 10 * getIntITN(++i)
+                + 3 * getIntITN(++i) + 5 * getIntITN(++i)
+                + 9 * getIntITN(++i) + 4 * getIntITN(++i)
+                + 6 * getIntITN(++i) + 8 * getIntITN(++i)) % 11;
+        controlDigit = (controlDigit != 10) ? controlDigit : 0;
         return controlDigit;
     }
 
     private Integer getControlDigit2() {
         int i = -1;
-        int controlDigit =  (3* valueOf(ITN.charAt(++i)) + 7* valueOf(ITN.charAt(++i)) +
-                2* valueOf(ITN.charAt(++i)) + 4* valueOf(ITN.charAt(++i)) +
-                10* valueOf(ITN.charAt(++i)) + 3* valueOf(ITN.charAt(++i)) +
-                5* valueOf(ITN.charAt(++i)) + 9* valueOf(ITN.charAt(++i)) +
-                4* valueOf(ITN.charAt(++i)) + 6* valueOf(ITN.charAt(++i)) +
-                8* valueOf(ITN.charAt(++i))) % 11;
-        controlDigit = controlDigit != 10 ? controlDigit : 0;
+        int controlDigit = (3 * getIntITN(++i) + 7 * getIntITN(++i)
+                + 2 * getIntITN(++i) + 4 * getIntITN(++i)
+                + 10 * getIntITN(++i) + 3 * getIntITN(++i)
+                + 5 * getIntITN(++i) + 9 * getIntITN(++i)
+                + 4 * getIntITN(++i) + 6 * getIntITN(++i)
+                + 8 * getIntITN(++i)) % 11;
+        controlDigit = (controlDigit != 10) ? controlDigit : 0;
         return controlDigit;
     }
 
@@ -218,5 +219,98 @@ class DataModel {
         for(int i = 0; i < quantData; i++)
             dataModels.add(new DataModel());
         return dataModels;
+    }
+
+    static int[] aligning(List<DataModel> dataModels) {
+        int columnNum = 14;
+        int[] maxSizeColumn = new int[columnNum];
+        getDefaultMaxSizeColumn(maxSizeColumn);
+
+        for (DataModel dataModel : dataModels) {
+            int i = -1;
+            maxSizeColumn[++i] = (dataModel.getName().length() > maxSizeColumn[i])
+                    ? dataModel.getName().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getSurname().length() > maxSizeColumn[i])
+                    ? dataModel.getSurname().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getPatronymic().length() > maxSizeColumn[i])
+                    ? dataModel.getPatronymic().length()
+                    : maxSizeColumn[i];
+
+            String strAge = "" + dataModel.getAge();
+            maxSizeColumn[++i] = (strAge.length() > maxSizeColumn[i])
+                    ? strAge.length()
+                    : maxSizeColumn[i];
+
+            String strSex = "" + dataModel.getSex();
+            maxSizeColumn[++i] = (strSex.length() > maxSizeColumn[i])
+                    ? strSex.length()
+                    : maxSizeColumn[i];
+
+            String strBorn = "" + dataModel.getBorn().get(Calendar.DATE)
+                    + "." + (1 + dataModel.getBorn().get(Calendar.MONTH))
+                    + "." + dataModel.getBorn().get(Calendar.YEAR);
+            maxSizeColumn[++i] = (strBorn.length() > maxSizeColumn[i])
+                    ? strBorn.length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getITN().length() > maxSizeColumn[i])
+                    ? dataModel.getITN().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getPostcode().length() > maxSizeColumn[i])
+                    ? dataModel.getPostcode().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getCountry().length() > maxSizeColumn[i])
+                    ? dataModel.getCountry().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getRegion().length() > maxSizeColumn[i])
+                    ? dataModel.getRegion().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getCity().length() > maxSizeColumn[i])
+                    ? dataModel.getCity().length()
+                    : maxSizeColumn[i];
+
+            maxSizeColumn[++i] = (dataModel.getStreet().length() > maxSizeColumn[i])
+                    ? dataModel.getStreet().length()
+                    : maxSizeColumn[i];
+
+            String strHome = "" + dataModel.getHome();
+            maxSizeColumn[++i] = (strHome.length() > maxSizeColumn[i])
+                    ? strHome.length()
+                    : maxSizeColumn[i];
+
+            String strFlat = "" + dataModel.getFlat();
+            maxSizeColumn[++i] = (strFlat.length() > maxSizeColumn[i])
+                    ? strFlat.length()
+                    : maxSizeColumn[i];
+        }
+
+        return maxSizeColumn;
+    }
+
+    private static void getDefaultMaxSizeColumn(int[] maxSizeColumn) {
+        int i = -1;
+
+        maxSizeColumn[++i] = "Имя".length();
+        maxSizeColumn[++i] = "Фамилия".length();
+        maxSizeColumn[++i] = "Отчество".length();
+        maxSizeColumn[++i] = "Возраст".length();
+        maxSizeColumn[++i] = "Пол".length();
+        maxSizeColumn[++i] = "Дата рождения".length();
+        maxSizeColumn[++i] = "ИНН".length();
+        maxSizeColumn[++i] = "Почтовый индекс".length();
+        maxSizeColumn[++i] = "Страна".length();
+        maxSizeColumn[++i] = "Область".length();
+        maxSizeColumn[++i] = "Город".length();
+        maxSizeColumn[++i] = "Улица".length();
+        maxSizeColumn[++i] = "Дом".length();
+        maxSizeColumn[++i] = "Квартира".length();
     }
 }
