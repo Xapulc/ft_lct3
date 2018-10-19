@@ -105,7 +105,6 @@ class APIWorker implements JsonDeserializer<DataModel> {
           фактически и содержится регион
          */
         jsonBuffer.append(json, json.indexOf("region\"")-1, json.indexOf("string")-1);
-        System.out.println(jsonBuffer);
 
         if (!(isJsonFilled("http://uinames.com/api/")))
             return false;
@@ -138,7 +137,7 @@ class APIWorker implements JsonDeserializer<DataModel> {
         BufferedReader reader;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(response.getEntity().getContent()));
+                    new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
         } catch (IOException e) {
             return false;
         }
