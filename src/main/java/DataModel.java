@@ -17,8 +17,29 @@ class DataModel {
     private int home;
     private int flat;
 
-    private DataModel() {
-        setAll();
+    DataModel(boolean isNewData) {
+        if (isNewData)
+            setAll();
+    }
+
+    DataModel() {}
+
+    DataModel(String name, String surname, String patronymic, char sex,
+              StringBuffer postcode, String country, String region, String city, String street) {
+        this.name = name;
+        this.surname = surname;
+        this.patronymic = patronymic;
+        this.sex = sex;
+        setRandBorn();
+        setRandAge();
+        setRandITN();
+        this.postcode = postcode;
+        this.country = country;
+        this.region = region;
+        this.city = city;
+        this.street = street;
+        setRandHome();
+        setRandFlat();
     }
 
     private void setAll() {
@@ -312,5 +333,15 @@ class DataModel {
         maxSizeColumn[++i] = "Улица".length();
         maxSizeColumn[++i] = "Дом".length();
         maxSizeColumn[++i] = "Квартира".length();
+    }
+
+    @Override
+    public String toString() {
+        return "DataModel"
+                + "Name = " + name + "\n"
+                + "Surname = " + surname + "\n"
+                /*+ born.get(Calendar.DATE) +
+                "." + (1 + born.get(Calendar.MONTH)) +
+                "." + born.get(Calendar.YEAR)*/;
     }
 }
