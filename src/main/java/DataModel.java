@@ -17,8 +17,8 @@ class DataModel {
     private int home;
     private int flat;
 
-    DataModel(boolean isNewData) {
-        if (isNewData)
+    DataModel(boolean takeFromFile) {
+        if (takeFromFile)
             setAll();
     }
 
@@ -339,9 +339,6 @@ class DataModel {
     public String toString() {
         return "DataModel"
                 + "Name = " + name + "\n"
-                + "Surname = " + surname + "\n"
-                /*+ born.get(Calendar.DATE) +
-                "." + (1 + born.get(Calendar.MONTH)) +
-                "." + born.get(Calendar.YEAR)*/;
+                + "Surname = " + surname + "\n";
     }
 }
